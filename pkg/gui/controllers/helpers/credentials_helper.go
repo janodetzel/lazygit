@@ -56,6 +56,8 @@ func (self *CredentialsHelper) getTitleAndMask(passOrUname oscommands.Credential
 		return self.c.Tr.CredentialsPassphrase, true
 	case oscommands.PIN:
 		return self.c.Tr.CredentialsPIN, true
+	case oscommands.MFA:
+		return self.c.Tr.CredentialsMFA, true
 	}
 
 	// should never land here
