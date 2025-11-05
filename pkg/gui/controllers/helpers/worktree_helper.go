@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"errors"
+	"path/filepath"
 	"strings"
 
 	"github.com/jesseduffield/gocui"
@@ -111,10 +112,13 @@ func (self *WorktreeHelper) NewWorktreeCheckout(base string, canCheckoutBase boo
 		})
 	}
 
+	defaultPath := self.defaultWorktreePath(base)
+
 	self.c.Prompt(types.PromptOpts{
-		Title: self.c.Tr.NewWorktreePath,
+		Title:          self.c.Tr.NewWorktreePath,
+		InitialContent: defaultPath,
 		HandleConfirm: func(path string) error {
-			opts.Path = path
+			opts.Path = strings.TrimSpace(path)
 
 			if detached {
 				return f()
@@ -154,6 +158,27 @@ func (self *WorktreeHelper) NewWorktreeCheckout(base string, canCheckoutBase boo
 	})
 
 	return nil
+}
+
+func (self *WorktreeHelper) defaultWorktreePath(base string) string {
+	base = strings.TrimSpace(base)
+	sep := string(filepath.Separator)
+
+	worktreeName := ShortBranchName(base)
+	if worktreeName == "" {
+		worktreeName = base
+	}
+
+	worktreeName = strings.Trim(worktreeName, "/")
+	if worktreeName == "" {
+		return ".." + sep
+	}
+
+	path := filepath.Join("..", worktreeName)
+	if !strings.HasSuffix(path, sep) {
+		path += sep
+	}
+	return path
 }
 
 func (self *WorktreeHelper) Switch(worktree *models.Worktree, contextKey types.ContextKey) error {
