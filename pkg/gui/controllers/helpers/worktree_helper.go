@@ -18,6 +18,7 @@ type WorktreeHelper struct {
 	reposHelper       *ReposHelper
 	refsHelper        *RefsHelper
 	suggestionsHelper *SuggestionsHelper
+	remoteNamesCache  []string
 }
 
 func NewWorktreeHelper(c *HelperCommon, reposHelper *ReposHelper, refsHelper *RefsHelper, suggestionsHelper *SuggestionsHelper) *WorktreeHelper {
@@ -131,23 +132,33 @@ func (self *WorktreeHelper) NewWorktreeCheckout(base string, canCheckoutBase boo
 				return f()
 			}
 
-			currentBranchName := ""
-			if self.refsHelper != nil {
-				if ref := self.refsHelper.GetCheckedOutRef(); ref != nil {
-					currentBranchName = ref.RefName()
+			defaultBranchName := self.sanitizedBranchName(base)
+			if defaultBranchName == "" {
+				defaultBranchName = strings.TrimSpace(base)
+			}
+
+			displayDefault := defaultBranchName
+			if canCheckoutBase {
+				displayDefault = strings.TrimSpace(base)
+				if displayDefault == "" {
+					displayDefault = defaultBranchName
 				}
 			}
 
-			title := utils.ResolvePlaceholderString(self.c.Tr.NewBranchNameLeaveBlank, map[string]string{"default": base})
+			title := utils.ResolvePlaceholderString(self.c.Tr.NewBranchNameLeaveBlank, map[string]string{"default": displayDefault})
 			self.c.Prompt(types.PromptOpts{
 				Title: title,
 				HandleConfirm: func(branchName string) error {
 					branchName = strings.TrimSpace(branchName)
 					if branchName == "" {
-						if !canCheckoutBase && base == currentBranchName {
-							return errors.New(self.c.Tr.BranchNameCannotBeBlank)
+						if canCheckoutBase {
+							opts.Branch = ""
+						} else {
+							if defaultBranchName == "" {
+								return errors.New(self.c.Tr.BranchNameCannotBeBlank)
+							}
+							opts.Branch = defaultBranchName
 						}
-						opts.Branch = ""
 					} else {
 						opts.Branch = branchName
 					}
@@ -179,9 +190,9 @@ func (self *WorktreeHelper) defaultWorktreePath(base string) string {
 		return path + sep
 	}
 
-	worktreeName := ShortBranchName(base)
+	worktreeName := self.sanitizedBranchName(base)
 	if worktreeName == "" {
-		worktreeName = base
+		worktreeName = strings.TrimSpace(base)
 	}
 
 	worktreeName = strings.Trim(worktreeName, "/")
@@ -203,6 +214,70 @@ func (self *WorktreeHelper) worktreeParentDir() string {
 		}
 	}
 	return "."
+}
+
+func (self *WorktreeHelper) sanitizedBranchName(base string) string {
+	return sanitizeBranchName(base, self.remoteNames())
+}
+
+func sanitizeBranchName(base string, remoteNames []string) string {
+	base = strings.TrimSpace(base)
+	if base == "" {
+		return ""
+	}
+
+	name := ShortBranchName(base)
+	if name == "" {
+		name = base
+	}
+
+	name = strings.Trim(name, "/")
+	if name == "" {
+		return ""
+	}
+
+	remoteSet := make(map[string]struct{}, len(remoteNames))
+	for _, remote := range remoteNames {
+		remote = strings.TrimSpace(remote)
+		if remote == "" {
+			continue
+		}
+		remoteSet[remote] = struct{}{}
+	}
+
+	parts := strings.Split(name, "/")
+	if len(parts) > 1 {
+		if _, ok := remoteSet[parts[0]]; ok {
+			name = strings.Join(parts[1:], "/")
+		}
+	}
+
+	return strings.Trim(name, "/")
+}
+
+func (self *WorktreeHelper) remoteNames() []string {
+	if len(self.remoteNamesCache) > 0 {
+		return self.remoteNamesCache
+	}
+	if self.c == nil || self.c.IGuiCommon == nil {
+		return nil
+	}
+	model := self.c.Model()
+	if model == nil {
+		return nil
+	}
+	names := make([]string, 0, len(model.Remotes))
+	for _, remote := range model.Remotes {
+		if remote == nil {
+			continue
+		}
+		name := strings.TrimSpace(remote.Name)
+		if name == "" {
+			continue
+		}
+		names = append(names, name)
+	}
+	return names
 }
 
 func (self *WorktreeHelper) Switch(worktree *models.Worktree, contextKey types.ContextKey) error {
