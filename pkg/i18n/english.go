@@ -859,6 +859,7 @@ type TranslationSet struct {
 	MainWorktree                             string
 	NewWorktree                              string
 	NewWorktreePath                          string
+	NewWorktreePathLeaveBlank                string
 	NewWorktreeBase                          string
 	RemoveWorktreeTooltip                    string
 	BranchNameCannotBeBlank                  string
@@ -1830,9 +1831,9 @@ func EnglishTranslationSet() *TranslationSet {
 		ErrCannotEditDirectory:                   "Cannot edit directories: you can only edit individual files",
 		ErrCannotCopyContentOfDirectory:          "Cannot copy content of directories: you can only copy content of individual files",
 		ErrStageDirWithInlineMergeConflicts:      "Cannot stage/unstage directory containing files with inline merge conflicts. Please fix up the merge conflicts first",
-		ErrRepositoryMovedOrDeleted:              "Cannot find repo. It might have been moved or deleted ¯\\_(ツ)_/¯",
+		ErrRepositoryMovedOrDeleted:              "Cannot find repo. It might have been moved or deleted ?\\_(?)_/?",
 		CommandLog:                               "Command log",
-		ErrWorktreeMovedOrRemoved:                "Cannot find worktree. It might have been moved or removed ¯\\_(ツ)_/¯",
+		ErrWorktreeMovedOrRemoved:                "Cannot find worktree. It might have been moved or removed ?\\_(?)_/?",
 		ToggleShowCommandLog:                     "Toggle show/hide command log",
 		FocusCommandLog:                          "Focus command log",
 		CommandLogHeader:                         "You can hide/focus this panel by pressing '%s'\n",
@@ -1952,6 +1953,7 @@ func EnglishTranslationSet() *TranslationSet {
 		MainWorktree:                             "(main)",
 		NewWorktree:                              "New worktree",
 		NewWorktreePath:                          "New worktree path",
+		NewWorktreePathLeaveBlank:                "New worktree path (leave blank to use {{.default}})",
 		NewWorktreeBase:                          "New worktree base ref",
 		RemoveWorktreeTooltip:                    "Remove the selected worktree. This will both delete the worktree's directory, as well as metadata about the worktree in the .git directory.",
 		BranchNameCannotBeBlank:                  "Branch name cannot be blank",
@@ -1969,7 +1971,7 @@ func EnglishTranslationSet() *TranslationSet {
 		MarkAsBaseCommit:                         "Mark as base commit for rebase",
 		MarkAsBaseCommitTooltip:                  "Select a base commit for the next rebase. When you rebase onto a branch, only commits above the base commit will be brought across. This uses the `git rebase --onto` command.",
 		CancelMarkedBaseCommit:                   "Cancel marked base commit",
-		MarkedCommitMarker:                       "↑↑↑ Will rebase from here ↑↑↑",
+		MarkedCommitMarker:                       "??? Will rebase from here ???",
 		FailedToOpenURL:                          "Failed to open URL %s\n\nError: %v",
 		InvalidLazygitEditURL:                    "Invalid lazygit-edit URL format: %s",
 		DisabledMenuItemPrefix:                   "Disabled: ",

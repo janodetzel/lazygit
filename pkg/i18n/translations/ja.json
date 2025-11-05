@@ -784,6 +784,7 @@
   "MainWorktree": "（メイン）",
   "NewWorktree": "新しいワークツリー",
   "NewWorktreePath": "新しいワークツリーのパス",
+  "NewWorktreePathLeaveBlank": "新しいワークツリーのパス（空白のままにすると {{.default}} を使用します）",
   "NewWorktreeBase": "新しいワークツリーのベース参照",
   "RemoveWorktreeTooltip": "選択したワークツリーを削除します。これはワークツリーのディレクトリとワークツリーに関するメタデータの両方を.gitディレクトリから削除します。",
   "BranchNameCannotBeBlank": "ブランチ名は空白にできません",

@@ -113,12 +113,19 @@ func (self *WorktreeHelper) NewWorktreeCheckout(base string, canCheckoutBase boo
 	}
 
 	defaultPath := self.defaultWorktreePath(base)
+	pathPromptTitle := utils.ResolvePlaceholderString(
+		self.c.Tr.NewWorktreePathLeaveBlank,
+		map[string]string{"default": defaultPath},
+	)
 
 	self.c.Prompt(types.PromptOpts{
-		Title:          self.c.Tr.NewWorktreePath,
-		InitialContent: defaultPath,
+		Title: pathPromptTitle,
 		HandleConfirm: func(path string) error {
-			opts.Path = strings.TrimSpace(path)
+			relativePath := strings.TrimSpace(path)
+			if relativePath == "" {
+				relativePath = defaultPath
+			}
+			opts.Path = relativePath
 
 			if detached {
 				return f()

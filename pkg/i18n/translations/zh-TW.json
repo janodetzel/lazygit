@@ -544,6 +544,7 @@
   "MissingWorktree": "（失蹤）",
   "MainWorktree": "（主要）",
   "NewWorktreePath": "工作目錄路徑",
+  "NewWorktreePathLeaveBlank": "工作目錄路徑（保留空白將使用 {{.default}}）",
   "NewWorktreeBase": "工作目錄來源",
   "BranchNameCannotBeBlank": "分支名稱不能為空",
   "NewBranchName": "分支名稱",

@@ -760,6 +760,7 @@
   "MainWorktree": "(主要)",
   "NewWorktree": "新建工作树",
   "NewWorktreePath": "新建工作树路径",
+  "NewWorktreePathLeaveBlank": "新建工作树路径（留空以使用 {{.default}}）",
   "NewWorktreeBase": "新建工作树基于ref",
   "RemoveWorktreeTooltip": "删除选定的工作树。这将删除工作树的目录以及 .git 目录中有关工作树的元数据。",
   "BranchNameCannotBeBlank": "分支名称不能为空",
