@@ -131,30 +131,26 @@ func (self *WorktreeHelper) NewWorktreeCheckout(base string, canCheckoutBase boo
 				return f()
 			}
 
-			if canCheckoutBase {
-				title := utils.ResolvePlaceholderString(self.c.Tr.NewBranchNameLeaveBlank, map[string]string{"default": base})
-				// prompt for the new branch name where a blank means we just check out the branch
-				self.c.Prompt(types.PromptOpts{
-					Title: title,
-					HandleConfirm: func(branchName string) error {
-						opts.Branch = branchName
-
-						return f()
-					},
-				})
-
-				return nil
+			currentBranchName := ""
+			if self.refsHelper != nil {
+				if ref := self.refsHelper.GetCheckedOutRef(); ref != nil {
+					currentBranchName = ref.RefName()
+				}
 			}
 
-			// prompt for the new branch name where a blank means we just check out the branch
+			title := utils.ResolvePlaceholderString(self.c.Tr.NewBranchNameLeaveBlank, map[string]string{"default": base})
 			self.c.Prompt(types.PromptOpts{
-				Title: self.c.Tr.NewBranchName,
+				Title: title,
 				HandleConfirm: func(branchName string) error {
+					branchName = strings.TrimSpace(branchName)
 					if branchName == "" {
-						return errors.New(self.c.Tr.BranchNameCannotBeBlank)
+						if !canCheckoutBase && base == currentBranchName {
+							return errors.New(self.c.Tr.BranchNameCannotBeBlank)
+						}
+						opts.Branch = ""
+					} else {
+						opts.Branch = branchName
 					}
-
-					opts.Branch = branchName
 
 					return f()
 				},
