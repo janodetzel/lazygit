@@ -412,7 +412,7 @@
         },
         "parseEmoji": {
           "type": "boolean",
-          "description": "If true, parse emoji strings in commit messages e.g. render :rocket: as 🚀\n(This should really be under 'gui', not 'git')",
+          "description": "If true, parse emoji strings in commit messages e.g. render :rocket: as ??\n(This should really be under 'gui', not 'git')",
           "default": false
         },
         "log": {
@@ -442,6 +442,11 @@
           "type": "integer",
           "description": "When copying commit hashes to the clipboard, truncate them to this length. Set to 40 to disable truncation.",
           "default": 12
+        },
+        "worktreeParentDir": {
+          "type": "string",
+          "description": "Directory where new worktrees should be created by default. Can be absolute or relative to the repository root.",
+          "default": "."
         }
       },
       "additionalProperties": false,

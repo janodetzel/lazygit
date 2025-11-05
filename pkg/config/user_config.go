@@ -298,7 +298,7 @@ type GitConfig struct {
 	CommitPrefixes map[string][]CommitPrefixConfig `yaml:"commitPrefixes"`
 	// See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#predefined-branch-name-prefix
 	BranchPrefix string `yaml:"branchPrefix"`
-	// If true, parse emoji strings in commit messages e.g. render :rocket: as 🚀
+	// If true, parse emoji strings in commit messages e.g. render :rocket: as ??
 	// (This should really be under 'gui', not 'git')
 	ParseEmoji bool `yaml:"parseEmoji"`
 	// Config for showing the log in the commits view
@@ -313,6 +313,8 @@ type GitConfig struct {
 	RemoteBranchSortOrder string `yaml:"remoteBranchSortOrder" jsonschema:"enum=date,enum=alphabetical"`
 	// When copying commit hashes to the clipboard, truncate them to this length. Set to 40 to disable truncation.
 	TruncateCopiedCommitHashesTo int `yaml:"truncateCopiedCommitHashesTo"`
+	// Directory where new worktrees should be created by default. Can be absolute or relative to the repository root.
+	WorktreeParentDir string `yaml:"worktreeParentDir"`
 }
 
 type PagerType string
@@ -845,6 +847,7 @@ func GetDefaultConfig() *UserConfig {
 			BranchPrefix:                 "",
 			ParseEmoji:                   false,
 			TruncateCopiedCommitHashesTo: 12,
+			WorktreeParentDir:            ".",
 		},
 		Refresher: RefresherConfig{
 			RefreshInterval: 10,

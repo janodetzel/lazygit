@@ -481,6 +481,10 @@ git:
   # to 40 to disable truncation.
   truncateCopiedCommitHashesTo: 12
 
+  # Directory where new worktrees should be created by default. Can be absolute or
+  # relative to the repository root.
+  worktreeParentDir: .
+
 # Periodic update checks
 update:
   # One of: 'prompt' (default) | 'background' | 'never'

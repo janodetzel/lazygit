@@ -171,6 +171,18 @@ func (self *WorktreeHelper) defaultWorktreePath(base string) string {
 	base = strings.TrimSpace(base)
 	sep := string(filepath.Separator)
 
+	parentDir := filepath.Clean(strings.TrimSpace(self.worktreeParentDir()))
+
+	ensureTrailingSeparator := func(path string) string {
+		if path == "" {
+			return sep
+		}
+		if strings.HasSuffix(path, sep) {
+			return path
+		}
+		return path + sep
+	}
+
 	worktreeName := ShortBranchName(base)
 	if worktreeName == "" {
 		worktreeName = base
@@ -178,14 +190,23 @@ func (self *WorktreeHelper) defaultWorktreePath(base string) string {
 
 	worktreeName = strings.Trim(worktreeName, "/")
 	if worktreeName == "" {
-		return ".." + sep
+		return ensureTrailingSeparator(parentDir)
 	}
 
-	path := filepath.Join("..", worktreeName)
-	if !strings.HasSuffix(path, sep) {
-		path += sep
+	path := filepath.Join(parentDir, worktreeName)
+	return ensureTrailingSeparator(path)
+}
+
+func (self *WorktreeHelper) worktreeParentDir() string {
+	if self.c != nil {
+		if config := self.c.UserConfig(); config != nil {
+			parent := strings.TrimSpace(config.Git.WorktreeParentDir)
+			if parent != "" {
+				return parent
+			}
+		}
 	}
-	return path
+	return "."
 }
 
 func (self *WorktreeHelper) Switch(worktree *models.Worktree, contextKey types.ContextKey) error {
